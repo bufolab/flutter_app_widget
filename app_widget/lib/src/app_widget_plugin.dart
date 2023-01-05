@@ -104,7 +104,7 @@ class AppWidgetPlugin {
     String? widgetLayout,
     Map<String, String>? textViews = const {},
     String? payload,
-    String? url,
+    Map<String, String>? url,
   }) async {
     return AppWidgetPlatform.instance.configureWidget(
       androidPackageName: androidPackageName??_androidPackageName,
@@ -148,8 +148,7 @@ class AppWidgetPlugin {
   }) async {
     return AppWidgetPlatform.instance.reloadWidgets(
       androidPackageName: _androidPackageName,
-      androidProviderName: androidProviderName,
-    );
+      androidProviderName: androidProviderName);
   }
 
   /// Update widget view manually
@@ -180,7 +179,7 @@ class AppWidgetPlugin {
     String? widgetLayout,
     Map<String, String>? textViews = const {},
     String? payload,
-    String? url,
+    Map<String, String>? url = const {},
   }) async {
     return AppWidgetPlatform.instance.updateWidget(
       androidPackageName: androidPackageName??_androidPackageName,

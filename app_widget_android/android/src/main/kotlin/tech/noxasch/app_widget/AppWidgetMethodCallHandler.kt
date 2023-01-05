@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import android.widget.RemoteViews
 import androidx.annotation.NonNull
 import io.flutter.plugin.common.BinaryMessenger
@@ -68,6 +69,7 @@ class AppWidgetMethodCallHandler(private val context: Context, )
     }
 
     private fun getWidgetIds(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
+
         val androidPackageName = call.argument<String>("androidPackageName")
             ?: context.packageName
         val widgetProviderName = call.argument<String>("androidProviderName") ?: return result.error(
@@ -113,25 +115,63 @@ class AppWidgetMethodCallHandler(private val context: Context, )
 
             val widgetLayoutId: Int = context.resources.getIdentifier(widgetLayout, "layout", context.packageName)
             val payload = call.argument<String>("payload")
-            val url = call.argument<String>("url")
+            val urlMap = call.argument<Map<String, String>>("url")
             val activityClass = Class.forName("$androidPackageName.MainActivity")
             val appWidgetManager = AppWidgetManager.getInstance(context)
-            val pendingIntent = createPendingClickIntent(activityClass, widgetId, payload, url)
+//            val pendingIntent = createPendingClickIntent(activityClass, widgetId, payload, urlM)
             val textViewsMap = call.argument<Map<String, String>>("textViews")
 
+            val views = RemoteViews(context.packageName, widgetLayoutId)
+
             if (textViewsMap != null) {
-                val views : RemoteViews = RemoteViews(context.packageName, widgetLayoutId).apply {
-                    for ((key, value) in textViewsMap) {
-                        val textViewId: Int =
-                            context.resources.getIdentifier(key, "id", context.packageName)
-                        if (textViewId == 0) throw Exception("Id $key does not exist!")
-                        setTextViewText(textViewId, value)
-                        setOnClickPendingIntent(textViewId, pendingIntent)
-                    }
+                for ((key, value) in textViewsMap) {
+                    val textViewId: Int =
+                        context.resources.getIdentifier(key, "id", context.packageName)
+                    if (textViewId == 0) throw Exception("Id $key does not exist!")
+
+                    // only work if widget is blank - so we have to clear it first
+                    views.setTextViewText(textViewId, value)
                 }
 
-                appWidgetManager.updateAppWidget(widgetId, views)
             }
+
+            if (urlMap != null) {
+                for ((key, value) in urlMap.entries) {
+                    try{
+                    val textViewId: Int =
+                        context.resources.getIdentifier(key, "id", context.packageName)
+                    if (textViewId == 0) throw Exception("Id $key does not exist!")
+
+                    if (urlMap?.contains(key) ?: false) {
+                        val pendingIntent = createPendingClickIntent(
+                            activityClass,
+                            widgetId,
+                            payload,
+                            urlMap?.get(key)
+                        )
+                        views.setOnClickPendingIntent(textViewId, pendingIntent)
+                    } }catch (e:Exception){
+
+
+                    }
+
+                }
+            }
+
+            appWidgetManager.updateAppWidget(widgetId, views)
+//            if (textViewsMap != null) {
+//                val views : RemoteViews = RemoteViews(context.packageName, widgetLayoutId).apply {
+//                    for ((key, value) in textViewsMap) {
+//                        val textViewId: Int =
+//                            context.resources.getIdentifier(key, "id", context.packageName)
+//                        if (textViewId == 0) throw Exception("Id $key does not exist!")
+//                        setTextViewText(textViewId, value)
+//                        setOnClickPendingIntent(textViewId, pendingIntent)
+//                    }
+//                }
+//
+//                appWidgetManager.updateAppWidget(widgetId, views)
+//            }
 
             // This is important to confirm the widget
             // otherwise it's considered cancelled and widget will be removed
@@ -161,6 +201,7 @@ class AppWidgetMethodCallHandler(private val context: Context, )
         return try {
             val androidPackageName = call.argument<String>("androidPackageName")
                 ?: context.packageName
+
             val widgetId = call.argument<Int>("widgetId")
                 ?: return result.error("-1", "widgetId is required!", null)
             val widgetLayout = call.argument<String>("widgetLayout")
@@ -169,10 +210,10 @@ class AppWidgetMethodCallHandler(private val context: Context, )
             val widgetLayoutId: Int =
                 context.resources.getIdentifier(widgetLayout, "layout", context.packageName)
             val payload = call.argument<String>("payload")
-            val url = call.argument<String>("url")
-            val activityClass = Class.forName("$androidPackageName.MainActivity")
+            val urlMap:Map<String, String>? = call.argument<Map<String, String>>("url")
+            val activityClass = Class.forName("$androidPackageName.MainActivity2")
             val appWidgetManager = AppWidgetManager.getInstance(context)
-            val pendingIntent = createPendingClickIntent(activityClass, widgetId, payload, url)
+
             val textViewsMap = call.argument<Map<String, String>>("textViews")
 
             if (textViewsMap != null) {
@@ -188,8 +229,12 @@ class AppWidgetMethodCallHandler(private val context: Context, )
                     appWidgetManager.partiallyUpdateAppWidget(widgetId, views)
                     views.setTextViewText(textViewId, value)
                     appWidgetManager.partiallyUpdateAppWidget(widgetId, views)
-                    views.setOnClickPendingIntent(textViewId, pendingIntent)
-                    appWidgetManager.partiallyUpdateAppWidget(widgetId, views)
+
+                    if(urlMap?.contains(key)?:false) {
+                        val pendingIntent = createPendingClickIntent(activityClass, widgetId, payload, urlMap?.get(key))
+                        views.setOnClickPendingIntent(textViewId, pendingIntent)
+                        appWidgetManager.partiallyUpdateAppWidget(widgetId, views)
+                    }
                 }
             }
 

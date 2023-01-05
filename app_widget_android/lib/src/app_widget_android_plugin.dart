@@ -45,7 +45,7 @@ class AppWidgetAndroidPlugin extends AppWidgetAndroid {
     String? widgetLayout,
     Map<String, String>? textViews = const {},
     String? payload,
-    String? url,
+    Map<String, String>? url,
   }) {
     assert(widgetId != null, 'widgetId is required for android!');
     assert(widgetLayout != null, 'widgetLayout is required for android!');
@@ -103,7 +103,7 @@ class AppWidgetAndroidPlugin extends AppWidgetAndroid {
     String? widgetLayout,
     Map<String, String>? textViews = const {},
     String? payload,
-    String? url,
+    Map<String, String>? url,
   }) {
     assert(widgetId != null, 'widgetId is required for android!');
     assert(widgetLayout != null, 'widgetLayout is required for android!');

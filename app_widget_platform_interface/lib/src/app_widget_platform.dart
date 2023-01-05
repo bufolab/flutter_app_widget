@@ -55,7 +55,7 @@ abstract class AppWidgetPlatform extends PlatformInterface {
     String? widgetLayout,
     Map<String, String>? textViews,
     String? payload,
-    String? url,
+    Map<String, String>? url,
   }) async {
     throw UnimplementedError();
   }
