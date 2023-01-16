@@ -44,6 +44,7 @@ class AppWidgetAndroidPlugin extends AppWidgetAndroid {
     int? widgetId,
     String? widgetLayout,
     Map<String, String>? textViews = const {},
+    Map<String, String>? imageViews = const {},
     String? payload,
     Map<String, String>? url,
   }) {
@@ -55,6 +56,7 @@ class AppWidgetAndroidPlugin extends AppWidgetAndroid {
       'widgetLayout': widgetLayout,
       'widgetId': widgetId,
       'textViews': textViews,
+      'imageViews': imageViews,
       'payload': payload,
       'url': url,
     });
