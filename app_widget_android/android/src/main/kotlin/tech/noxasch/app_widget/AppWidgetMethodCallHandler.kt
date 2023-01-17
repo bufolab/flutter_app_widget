@@ -131,12 +131,12 @@ class AppWidgetMethodCallHandler(private val context: Context, )
                         context.resources.getIdentifier(key, "id", context.packageName)
                     if (textViewId == 0) throw Exception("Id $key does not exist!")
 
-                 var stringValue = value
-                    // only work if widget is blank - so we have to clear it first
+                    var stringValue = value
+
                     try {
                         var stringId= context.resources.getIdentifier(value.lowercase(), "string", context.packageName)
                         stringValue = context.resources.getString(stringId)
-                    }catch (e:NotFoundException){
+                    } catch (e:NotFoundException){
                         stringValue = value
                     }
 
@@ -237,8 +237,8 @@ class AppWidgetMethodCallHandler(private val context: Context, )
 
             val textViewsMap = call.argument<Map<String, String>>("textViews")
 
+            val views = RemoteViews(context.packageName, widgetLayoutId)
             if (textViewsMap != null) {
-                val views = RemoteViews(context.packageName, widgetLayoutId)
 
                 for ((key, value) in textViewsMap) {
                     val textViewId: Int =
@@ -250,12 +250,42 @@ class AppWidgetMethodCallHandler(private val context: Context, )
                     appWidgetManager.partiallyUpdateAppWidget(widgetId, views)
                     views.setTextViewText(textViewId, value)
                     appWidgetManager.partiallyUpdateAppWidget(widgetId, views)
+                }
+            }
 
-                    if(urlMap?.contains(key)?:false) {
-                        val pendingIntent = createPendingClickIntent(activityClass, widgetId, payload, urlMap?.get(key))
+            val imageViewsMap = call.argument<Map<String, String>>("imageViews")
+            if (imageViewsMap != null) {
+                for ((key, value) in imageViewsMap) {
+                    val imageViewId: Int =
+                        context.resources.getIdentifier(key, "id", context.packageName)
+                    if (imageViewId == 0) throw Exception("Id $key does not exist!")
+
+                    var resId = context.resources.getIdentifier(value,"drawable",context.packageName)
+                    views.setImageViewResource(imageViewId,resId)
+                    appWidgetManager.partiallyUpdateAppWidget(widgetId, views)
+                }
+            }
+
+            if (urlMap != null) {
+                for ((key, value) in urlMap.entries) {
+                    try{
+                        val textViewId: Int =
+                            context.resources.getIdentifier(key, "id", context.packageName)
+                        if (textViewId == 0) throw Exception("Id $key does not exist!")
+
+                        val pendingIntent = createPendingClickIntent(
+                            activityClass,
+                            widgetId,
+                            payload,
+                            value
+                        )
                         views.setOnClickPendingIntent(textViewId, pendingIntent)
                         appWidgetManager.partiallyUpdateAppWidget(widgetId, views)
+                    }catch (e:Exception){
+
+
                     }
+
                 }
             }
 
