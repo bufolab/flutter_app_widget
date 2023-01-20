@@ -36,8 +36,9 @@ abstract class AppWidgetPlatform extends PlatformInterface {
     int? widgetId,
     String? widgetLayout,
     Map<String, String>? textViews,
+    Map<String, String>? imageViews = const {},
     String? payload,
-    String? url,
+    Map<String, String>? url,
   }) async {
     throw UnimplementedError();
   }
@@ -54,6 +55,7 @@ abstract class AppWidgetPlatform extends PlatformInterface {
     int? widgetId,
     String? widgetLayout,
     Map<String, String>? textViews,
+    Map<String, String>? imageViews = const {},
     String? payload,
     Map<String, String>? url,
   }) async {
