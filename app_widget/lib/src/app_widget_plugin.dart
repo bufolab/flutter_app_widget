@@ -180,6 +180,7 @@ class AppWidgetPlugin {
     int? widgetId,
     String? widgetLayout,
     Map<String, String>? textViews = const {},
+    Map<String, String>? imageViews = const {},
     String? payload,
     Map<String, String>? url = const {},
   }) async {
@@ -188,6 +189,7 @@ class AppWidgetPlugin {
       widgetId: widgetId,
       widgetLayout: widgetLayout,
       textViews: textViews,
+      imageViews:imageViews,
       payload: payload,
       url: url,
     );

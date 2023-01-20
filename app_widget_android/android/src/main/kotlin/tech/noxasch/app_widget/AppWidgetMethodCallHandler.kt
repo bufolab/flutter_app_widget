@@ -161,7 +161,7 @@ class AppWidgetMethodCallHandler(private val context: Context, )
                     try{
                     val textViewId: Int =
                         context.resources.getIdentifier(key, "id", context.packageName)
-                    if (textViewId == 0) throw Exception("Id $key does not exist!")
+                       if (textViewId == 0) throw Exception("Id $key does not exist!")
 
                         val pendingIntent = createPendingClickIntent(
                             activityClass,
@@ -232,7 +232,7 @@ class AppWidgetMethodCallHandler(private val context: Context, )
                 context.resources.getIdentifier(widgetLayout, "layout", context.packageName)
             val payload = call.argument<String>("payload")
             val urlMap:Map<String, String>? = call.argument<Map<String, String>>("url")
-            val activityClass = Class.forName("$androidPackageName.MainActivity2")
+            val activityClass = Class.forName("$androidPackageName.MainActivity")
             val appWidgetManager = AppWidgetManager.getInstance(context)
 
             val textViewsMap = call.argument<Map<String, String>>("textViews")
@@ -262,7 +262,6 @@ class AppWidgetMethodCallHandler(private val context: Context, )
 
                     var resId = context.resources.getIdentifier(value,"drawable",context.packageName)
                     views.setImageViewResource(imageViewId,resId)
-                    appWidgetManager.partiallyUpdateAppWidget(widgetId, views)
                 }
             }
 

@@ -116,6 +116,7 @@ class AppWidgetAndroidPlugin extends AppWidgetAndroid {
       'widgetLayout': widgetLayout,
       'widgetId': widgetId,
       'textViews': textViews,
+      'imageViews': imageViews,
       'payload': payload,
       'url': url,
     });
